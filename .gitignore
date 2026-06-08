@@ -1,0 +1,4 @@
+# Añade estas líneas:
+.env
+__pycache__/
+*.db

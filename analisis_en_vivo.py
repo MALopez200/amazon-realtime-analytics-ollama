@@ -1,46 +1,127 @@
 import sqlite3
-import subprocess
+import time
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
+import datetime
+from consultor import consultar_local, auditar_respuesta
 
-conexion = sqlite3.connect('amazon_clon.db')
-cursor  = conexion.cursor()
+# Cargar variables desde el archivo .env
+load_dotenv()
 
-cursor.execute('SELECT SUM(precio) FROM VENTAS')
-total_ventas = cursor.fetchone()[0]
-
-cursor.execute('''
-    SELECT ubicacion, 
-            COUNT(*), 
-            SUM(precio), 
-            SUM(precio) / COUNT(*) 
-    FROM ventas 
-    GROUP BY ubicacion 
-    ORDER BY COUNT(*) DESC 
-    LIMIT 3
-''')
-top_estados = cursor.fetchall()
-
-conexion.close()
-
-datos_crudos = f"""
-Reporte del sistema de ventas en tiempo real:
-- Ingresos totales acumulados: ${total_ventas:.2f}
-- Top 3 estados con más transacciones:
-    1. {top_estados[0][0]} ({top_estados[0][1]} ventas por {top_estados[0][1]} USD con un promedio de {top_estados[0][3]})
-    2. {top_estados[1][0]} ({top_estados[1][1]} ventas por {top_estados[1][1]} USD con un promedio de {top_estados[1][3]} por venta)
-    3. {top_estados[2][0]} ({top_estados[2][1]} ventas por {top_estados[2][1]} USD con un promedio de {top_estados[2][3]} por venta)
-"""
-
-prompt = f'Eres un analista de negocio experto. Analiza estos datos reales: {datos_crudos}. Dame 3 observaciones estratégicas basadas ESTRICTAMENTE en los números provistos, sin calcular nuevos promedios'
-
-print ('ANALIZANDO LOS DATOS...')
-
-resultado = subprocess.run(
-    ['ollama', 'run', 'llama3.2:latest',prompt], 
-    capture_output=True, 
-    text=True,
-    encoding='utf-8'
+# Configurar cliente DeepSeek con la clave secreta (nunca hardcodeada)
+client = OpenAI(
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com"
 )
 
-print("\n================ REPORTE GENERADO POR IA LOCAL ================")
-print(resultado.stdout)
-print("===============================================================")
+# Conexión a la base de datos (se mantendrá abierta durante el bucle)
+conexion = sqlite3.connect('amazon_clon.db')
+cursor = conexion.cursor()
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS ventas (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    TIMESTAMP TIMESTAMP,
+    PAYMENT_METHOD TEXT,
+
+    COSTOMER_ID INTEGER,
+    DEVICE_TYPE TEXT,
+    MARKETING_CHANNEL TEXT,
+
+    PRODUCT_NAME TEXT,
+    CATEGORY TEXT,
+    SUB_CATEGORY TEXT,
+    WARRANTY_MONTHS INTEGER,
+    PRODUCT_RATING REAL,
+
+    PRICE REAL,
+    QUANTITY INTEGER,
+    DISCOUNT_PERCENTAGE REAL,
+
+    LOCATION_STATE TEXT,
+    POSTAL_CODE TEXT,
+    IS_GIFT TEXT,
+    SHIPPING_METHOD TEXT,
+    SHIPPING_CARRIER TEXT,
+    DELIVERY_STATUS TEXT,
+
+    RETURN_STATUS TEXT
+)
+''')
+
+while True:
+    #tiempo actual para el analisis de la ia
+    ahora = datetime.datetime.now()
+    # ------------------------------------------------------------
+    # 1. TOP 5 PRODUCTOS MÁS VENDIDOS
+    # ------------------------------------------------------------
+    cursor.execute('''
+        SELECT PRODUCT_NAME, COUNT(*)
+        FROM ventas
+        GROUP BY PRODUCT_NAME
+        ORDER BY COUNT(*) DESC
+        LIMIT 5
+    ''')
+    top_productos = cursor.fetchall()
+
+    if top_productos == '':
+        print ('No hay datos por analizar')
+    else:
+
+        print("\n🔥 TOP 5 PRODUCTOS:")
+        for producto in top_productos:
+            print(f"   • {producto[0]} ({producto[1]} ventas)")
+
+        prompt_bodega = (
+            f"Eres el administrador de la bodega. Estos son los 5 productos que se están "
+            f"vendiendo más: {top_productos}. Dame una estrategia de 2 pasos para asegurarme "
+            f"de que nunca nos quedemos sin stock. Responde en un párrafo de 30 palabras."
+        )
+
+        print("\n📦 ANALIZANDO INVENTARIO...")
+        ahora = datetime.datetime.now()
+        timestamp_legible = ahora.strftime("%Y-%m-%d %H:%M:%S")
+        print(timestamp_legible)
+
+        respuesta = consultar_local(prompt_bodega)
+        print(respuesta)
+        auditoria = auditar_respuesta(respuesta, top_productos,'top 5')
+        print('Auditoria', auditoria)
+        print("=" * 60)
+
+    # ------------------------------------------------------------
+    # 2. DEVOLUCIONES DE REGALOS POR ESTADO
+    # ------------------------------------------------------------
+    cursor.execute('''
+        SELECT LOCATION_STATE, SUM(PRICE)
+        FROM ventas
+        WHERE RETURN_STATUS = 'Devuelto' AND IS_GIFT = 'Si'
+        GROUP BY LOCATION_STATE
+        ORDER BY SUM(PRICE) DESC
+        LIMIT 5
+    ''')
+    calidad = cursor.fetchall()
+    if calidad == '':
+        print ('No hay datos por analizar')
+    else:
+        prompt_calidad = (
+            f"Eres el jefe de control de calidad. Esta es la lista de devoluciones por "
+            f"estado: {calidad}. Todos son obsequios. Indica exactamente qué zona de USA es "
+            f"la más afectada y sugiere acciones de servicio al cliente para retener a esos compradores."
+        )
+
+        print("\n🔍 ANALIZANDO DEVOLUCIONES...")
+        ahora = datetime.datetime.now()
+        timestamp_legible = ahora.strftime("%Y-%m-%d %H:%M:%S")
+        print(timestamp_legible)
+
+        respuesta = consultar_local(prompt_calidad)
+        print(respuesta)
+        print("=" * 60)
+
+    # ✅ Pausa antes de la siguiente iteración
+    time.sleep(300)
+
+# ❗ Si el bucle infinito se interrumpe, se cierra limpiamente
+conexion.close()
