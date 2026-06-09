@@ -2,6 +2,7 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 from consultor import consultar_local
+import time
 
 st.title("📊 Dashboard de Ventas - Amazon Clon")
 st.write("Aquí irán los análisis en tiempo real")
@@ -25,7 +26,10 @@ pregunta = st.text_input("💬 Pregunta a la IA local:")
 
 if st.button("Consultar"):
     if pregunta:
-        respuesta =consultar_local(pregunta)
+        respuesta = consultar_local(pregunta)
         st.write(respuesta)
+
+time.sleep(1)
+st.rerun()
 
 conn.close()
