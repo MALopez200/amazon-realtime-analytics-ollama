@@ -51,22 +51,24 @@
 
 16. **Tú eres el jefe, yo el asistente** – Asistir, no hacer tu trabajo.
 
-17. **Una sola tarea a la vez** – No mezclar tareas en el mismo mensaje.
+17. **No leer archivos sensibles sin permiso** – Antes de leer `.env` o cualquier archivo con credenciales, preguntar primero al usuario.
 
-18. **Hacer commit antes de pasar al siguiente punto** – Asegurar el progreso antes de avanzar.
+18. **Una sola tarea a la vez** – No mezclar tareas en el mismo mensaje.
 
-19. **Leer todo el historial del chat** – Tener en cuenta todas las notas y preferencias acumuladas.
+19. **Hacer commit antes de pasar al siguiente punto** – Asegurar el progreso antes de avanzar.
 
-20. **SIEMPRE revisar este archivo antes de responder** – Sin importar el tipo de pregunta.
+20. **Leer todo el historial del chat** – Tener en cuenta todas las notas y preferencias acumuladas.
+
+21. **SIEMPRE revisar este archivo antes de responder** – Sin importar el tipo de pregunta.
 
 ---
 
 ## 🐙 Git
 
-21. **Trabajar siempre en una branch de Git** – Antes de cualquier tarea grande, crear una rama nueva.
+22. **Trabajar siempre en una branch de Git** – Antes de cualquier tarea grande, crear una rama nueva.
 
-22. **Nombres de rama coherentes** – Usar nombres como `feature/amazon-hybrid-ai`, no heredar numeración de proyectos anteriores.
+23. **Nombres de rama coherentes** – Usar nombres como `feature/amazon-hybrid-ai`, no heredar numeración de proyectos anteriores.
 
-23. **Comandos de Git separados, uno a uno** – No usar `&&`. Cada comando en su propio bloque para ejecutar en la terminal.
+24. **Comandos de Git separados, uno a uno** – No usar `&&`. Cada comando en su propio bloque para ejecutar en la terminal.
 
 
