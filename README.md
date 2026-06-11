@@ -31,6 +31,7 @@ graph TD
 | `tareas.md` | **Task Checklist** — Current and upcoming features to build |
 | `linkedin_post.md` | **LinkedIn Post** — Draft post in English and Spanish about the project |
 
+
 ## 🛠️ Tech Stack
 
 | Technology | Purpose |
