@@ -29,6 +29,7 @@ if st.button("Consultar"):
         respuesta = consultar_local(pregunta)
         st.write(respuesta)
 
-st.markdown('<meta http-equiv="refresh" content="1">', unsafe_allow_html=True)
-
+# Recargar cada 5 segundos (nativo de Streamlit, sin HTML)
 conn.close()
+time.sleep(5)
+st.rerun()

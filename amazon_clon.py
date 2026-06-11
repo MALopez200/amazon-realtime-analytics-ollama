@@ -1,44 +1,12 @@
-import sqlite3
 import random
 import time
 from datetime import datetime
+from database import conectar_bd
 
 # =====================================================================
 # 1. CONEXIÓN Y CREACIÓN DE LA BASE DE DATOS
 # =====================================================================
-conexion = sqlite3.connect('amazon_clon.db')
-cursor = conexion.cursor()
-
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS ventas (
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    TIMESTAMP TIMESTAMP,
-    PAYMENT_METHOD TEXT,
-
-    CUSTOMER_ID INTEGER,
-    DEVICE_TYPE TEXT,
-    MARKETING_CHANNEL TEXT,
-
-    PRODUCT_NAME TEXT,
-    CATEGORY TEXT,
-    SUB_CATEGORY TEXT,
-    WARRANTY_MONTHS INTEGER,
-    PRODUCT_RATING REAL,
-
-    PRICE REAL,
-    QUANTITY INTEGER,
-    DISCOUNT_PERCENTAGE REAL,
-
-    LOCATION_STATE TEXT,
-    POSTAL_CODE TEXT,
-    IS_GIFT TEXT,
-    SHIPPING_METHOD TEXT,
-    SHIPPING_CARRIER TEXT,
-    DELIVERY_STATUS TEXT,
-
-    RETURN_STATUS TEXT
-)
-''')
+conexion, cursor = conectar_bd()
 
 # =====================================================================
 # 2. PARÁMETROS FIJOS (CATÁLOGOS CARGADOS AFUERA DEL BUCLE PARA OPTIMIZAR)
@@ -107,6 +75,8 @@ estados_entrega = ['Entregado', 'Enviado', 'En camino']
 # =====================================================================
 # 3. BUCLE DE SIMULACIÓN (SOLO DECISIONES DINÁMICAS EN TIEMPO REAL)
 # =====================================================================
+contador = 0
+BATCH_SIZE = 200
 while True:
     # --- Selección del Producto ---
     categoria = random.choice(list(categorias_general.keys()))
@@ -184,8 +154,11 @@ while True:
         is_gift, tipo_envio, shipping_carrier, delivery_status, return_status
     ))
     
-    # El commit se ejecuta siempre para asegurar cada dato en el archivo .db
-    conexion.commit()
+    # Commit por lotes: evita escribir en disco en cada venta
+    contador += 1
+    if contador % BATCH_SIZE == 0:
+        conexion.commit()
+        print(f"💾 Checkpoint: {contador} ventas guardadas en lote")
     
     # El aviso en la terminal sí se queda filtrado por el residuo matemático para no saturar
     print(f"[{fecha_venta}] ⚡ venta de {product_name} realizada con exito!")

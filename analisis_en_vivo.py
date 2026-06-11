@@ -1,55 +1,15 @@
-import sqlite3
 import time
-import os
-from openai import OpenAI
 from dotenv import load_dotenv
 import datetime
 from consultor import consultar_local, auditar_respuesta
 from alertas import enviar_alerta
+from database import conectar_bd
 
 # Cargar variables desde el archivo .env
 load_dotenv()
 
-# Configurar cliente DeepSeek con la clave secreta (nunca hardcodeada)
-client = OpenAI(
-    api_key=os.getenv("DEEPSEEK_API_KEY"),
-    base_url="https://api.deepseek.com"
-)
-
 # Conexión a la base de datos (se mantendrá abierta durante el bucle)
-conexion = sqlite3.connect('amazon_clon.db')
-cursor = conexion.cursor()
-
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS ventas (
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    TIMESTAMP TIMESTAMP,
-    PAYMENT_METHOD TEXT,
-
-    CUSTOMER_ID INTEGER,
-    DEVICE_TYPE TEXT,
-    MARKETING_CHANNEL TEXT,
-
-    PRODUCT_NAME TEXT,
-    CATEGORY TEXT,
-    SUB_CATEGORY TEXT,
-    WARRANTY_MONTHS INTEGER,
-    PRODUCT_RATING REAL,
-
-    PRICE REAL,
-    QUANTITY INTEGER,
-    DISCOUNT_PERCENTAGE REAL,
-
-    LOCATION_STATE TEXT,
-    POSTAL_CODE TEXT,
-    IS_GIFT TEXT,
-    SHIPPING_METHOD TEXT,
-    SHIPPING_CARRIER TEXT,
-    DELIVERY_STATUS TEXT,
-
-    RETURN_STATUS TEXT
-)
-''')
+conexion, cursor = conectar_bd()
 
 while True:
     #tiempo actual para el analisis de la ia
@@ -71,7 +31,7 @@ while True:
     else:
         try:
             enviar_alerta("analisis periodico", str(top_productos))
-        except:
+        except Exception:
             print('no hay conexion para enviar los datos')
         print("\n🔥 TOP 5 PRODUCTOS:")
         for producto in top_productos:
@@ -111,7 +71,7 @@ while True:
     else:
         try:
             enviar_alerta('Analisis devoluciones', str(calidad))
-        except:
+        except Exception:
             print('no hay conexion para enviar los datos')
         prompt_calidad = (
             f"Eres el jefe de control de calidad. Esta es la lista de devoluciones por "

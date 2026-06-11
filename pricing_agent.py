@@ -7,8 +7,12 @@ cursor = conexion.cursor()
 
 while True:
     cursor.execute('''
-        SELECT PRODUCT_NAME, SUM(QUANTITY), AVG(PRICE) FROM ventas  GROUP BY PRODUCT_NAME
-        ORDER BY COUNT(*) DESC
+        SELECT PRODUCT_NAME, 
+               SUM(QUANTITY) AS total_unidades, 
+               ROUND(AVG(PRICE), 2) AS precio_promedio
+        FROM ventas
+        GROUP BY PRODUCT_NAME
+        ORDER BY total_unidades DESC
         LIMIT 10
     ''')
 

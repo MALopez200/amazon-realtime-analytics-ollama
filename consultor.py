@@ -3,6 +3,16 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
+# ──────────────────────────────────────────────
+# Cliente compartido (se crea UNA SOLA VEZ)
+# ──────────────────────────────────────────────
+_cliente_deepseek = OpenAI(
+    api_key=os.getenv('DEEPSEEK_API_KEY'),
+    base_url="https://api.deepseek.com"
+)
+
 def consultar_local(prompt):
 
     respuesta = ollama.chat(
@@ -24,12 +34,7 @@ def auditar_respuesta(respuesta_local, datos_reales, prompt_contexto,):
         f"Si hay errores, señálalos. Si es correcta, indícalo."
     )    
 
-    client = OpenAI(
-    api_key = os.getenv('DEEPSEEK_API_KEY'),
-    base_url="https://api.deepseek.com"
-    )
-
-    respuesta = client.chat.completions.create(
+    respuesta = _cliente_deepseek.chat.completions.create(
     model="deepseek-chat",
     messages=[
         {"role": "user", "content": prompt}

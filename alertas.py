@@ -13,26 +13,37 @@ def enviar_alerta(asunto, cuerpo):
 
     # 2. Validar que existan
     if not all([email_user, email_password, alerta_email]):
-        print('No se aceptan campos vacios')
+        print('❌ No se aceptan campos vacios')
         return
 
-    # 3. Conectar con Gmail
-    servidor = smtplib.SMTP('smtp.gmail.com', 587)
-    servidor.starttls()                    # Conversación segura
-    servidor.login(email_user, email_password)  # Identificarse
+    servidor = None
+    try:
+        # 3. Conectar con Gmail (con timeout de 10s)
+        servidor = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)
+        servidor.starttls()                    # Conversación segura
+        servidor.login(email_user, email_password)  # Identificarse
 
-    # 4. Crear la carta
-    mensaje = MIMEMultipart()
-    mensaje['From'] = email_user
-    mensaje['To'] = alerta_email
-    mensaje['Subject'] = asunto
-    mensaje.attach(MIMEText(cuerpo, 'plain'))
+        # 4. Crear la carta
+        mensaje = MIMEMultipart()
+        mensaje['From'] = email_user
+        mensaje['To'] = alerta_email
+        mensaje['Subject'] = asunto
+        mensaje.attach(MIMEText(cuerpo, 'plain'))
 
-    # 5. Enviar y cerrar
-    servidor.sendmail(email_user, alerta_email, mensaje.as_string())
-    servidor.quit()
+        # 5. Enviar
+        servidor.sendmail(email_user, alerta_email, mensaje.as_string())
+        print(f'✅ Correo enviado a {alerta_email}')
 
-    print(f'✅ Correo enviado a {alerta_email}')
+    except smtplib.SMTPException as e:
+        print(f'❌ Error al enviar correo: {e}')
+    except Exception as e:
+        print(f'❌ Error inesperado: {e}')
+    finally:
+        if servidor:
+            try:
+                servidor.quit()
+            except Exception:
+                pass  # Si ya falló la conexión, ignorar error al cerrar
 
 if __name__ == '__main__':
     enviar_alerta('Prueba', 'Este es un correo de prueba')
