@@ -5,6 +5,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import datetime
 from consultor import consultar_local, auditar_respuesta
+from alertas import enviar_alerta
 
 # Cargar variables desde el archivo .env
 load_dotenv()
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS ventas (
     TIMESTAMP TIMESTAMP,
     PAYMENT_METHOD TEXT,
 
-    COSTOMER_ID INTEGER,
+    CUSTOMER_ID INTEGER,
     DEVICE_TYPE TEXT,
     MARKETING_CHANNEL TEXT,
 
@@ -68,7 +69,10 @@ while True:
     if not top_productos:
         print ('No hay datos por analizar')
     else:
-
+        try:
+            enviar_alerta("analisis periodico", str(top_productos))
+        except:
+            print('no hay conexion para enviar los datos')
         print("\n🔥 TOP 5 PRODUCTOS:")
         for producto in top_productos:
             print(f"   • {producto[0]} ({producto[1]} ventas)")
@@ -105,6 +109,10 @@ while True:
     if not calidad:
         print ('No hay datos por analizar')
     else:
+        try:
+            enviar_alerta('Analisis devoluciones', str(calidad))
+        except:
+            print('no hay conexion para enviar los datos')
         prompt_calidad = (
             f"Eres el jefe de control de calidad. Esta es la lista de devoluciones por "
             f"estado: {calidad}. Todos son obsequios. Indica exactamente qué zona de USA es "
