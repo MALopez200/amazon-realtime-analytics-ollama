@@ -71,4 +71,6 @@
 
 24. **Comandos de Git separados, uno a uno** – No usar `&&`. Cada comando en su propio bloque para ejecutar en la terminal.
 
+25. **Varios commits locales antes de un solo push** – Acumular commits localmente y hacer `git push` solo al final de una funcionalidad completa. No pushear cambios a medias.
+
 
