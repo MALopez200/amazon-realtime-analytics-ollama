@@ -2,3 +2,6 @@
 .env
 __pycache__/
 *.db
+prueba.py
+tareaas.md
+instrucciones.md

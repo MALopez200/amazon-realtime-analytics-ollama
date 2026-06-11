@@ -29,7 +29,6 @@ if st.button("Consultar"):
         respuesta = consultar_local(pregunta)
         st.write(respuesta)
 
-time.sleep(1)
-st.rerun()
+st.markdown('<meta http-equiv="refresh" content="1">', unsafe_allow_html=True)
 
 conn.close()
