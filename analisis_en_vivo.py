@@ -65,7 +65,7 @@ while True:
     ''')
     top_productos = cursor.fetchall()
 
-    if top_productos == '':
+    if not top_productos:
         print ('No hay datos por analizar')
     else:
 
@@ -102,7 +102,7 @@ while True:
         LIMIT 5
     ''')
     calidad = cursor.fetchall()
-    if calidad == '':
+    if not calidad:
         print ('No hay datos por analizar')
     else:
         prompt_calidad = (

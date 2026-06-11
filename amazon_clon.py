@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS ventas (
     TIMESTAMP TIMESTAMP,
     PAYMENT_METHOD TEXT,
 
-    COSTOMER_ID INTEGER,
+    CUSTOMER_ID INTEGER,
     DEVICE_TYPE TEXT,
     MARKETING_CHANNEL TEXT,
 
@@ -172,7 +172,7 @@ while True:
     
     cursor.execute('''
         INSERT INTO ventas (
-            TIMESTAMP, PAYMENT_METHOD, COSTOMER_ID, DEVICE_TYPE, MARKETING_CHANNEL,
+            TIMESTAMP, PAYMENT_METHOD, CUSTOMER_ID, DEVICE_TYPE, MARKETING_CHANNEL,
             PRODUCT_NAME, CATEGORY, SUB_CATEGORY, WARRANTY_MONTHS, PRODUCT_RATING,
             PRICE, QUANTITY, DISCOUNT_PERCENTAGE, LOCATION_STATE, POSTAL_CODE,
             IS_GIFT, SHIPPING_METHOD, SHIPPING_CARRIER, DELIVERY_STATUS, RETURN_STATUS
@@ -191,4 +191,4 @@ while True:
     print(f"[{fecha_venta}] ⚡ venta de {product_name} realizada con exito!")
         
     # Espera controlada de una centésima de segundo
-    time.sleep(0.5)
+    time.sleep(0.01)
