@@ -20,4 +20,4 @@ while True:
 
     print(analisis)
 
-    time.sleep(300)
+    time.sleep(30000)

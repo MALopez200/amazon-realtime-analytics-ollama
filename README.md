@@ -26,24 +26,21 @@ graph TD
 | `pricing_agent.py` | **Pricing Agent** — Analyzes top 10 products by revenue and suggests price increases / discounts using local AI |
 | `consultor.py` | **AI Connector** — Dual interface: `consultar_local()` (Ollama/Llama 3.2) and `auditar_respuesta()` (DeepSeek API) |
 | `alertas.py` | **Email Alerts** — Sends SMTP alerts via Gmail when analytics detect anomalies or complete cycles |
-| `dashboard.py` | **Streamlit Dashboard** — Visualizes top products with bar charts and allows Q&A with local AI |
-| `instrucciones.md` | **Coding Rules** — Defines how the AI assistant teaches and collaborates with the developer |
-| `tareas.md` | **Task Checklist** — Current and upcoming features to build |
-| `linkedin_post.md` | **LinkedIn Post** — Draft post in English and Spanish about the project |
+| `dashboard.py` | **Dashboard Streamlit** — Visualizes top products with bar charts and allows Q&A with local AI |
+| `instrucciones.md` | **Reglas de Codificación** — Define cómo el asistente IA enseña y colabora con el desarrollador |
 
+## 🛠️ Stack Tecnológico
 
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
+| Tecnología | Propósito |
 |---|---|
-| **Python 3.11+** | Core language |
-| **SQLite** | Relational database (`amazon_clon.db`) |
-| **Ollama + Llama 3.2 (3B)** | Local AI inference (zero API cost) |
-| **DeepSeek API** | Cloud auditor — verifies local AI responses |
-| **Streamlit** | Real-time dashboard |
-| **SMTP (Gmail)** | Email alert delivery |
-| **python-dotenv** | Environment variable management |
-| **Git** | Version control with feature branch workflow |
+| **Python 3.11+** | Lenguaje principal |
+| **SQLite** | Base de datos relacional (`amazon_clon.db`) |
+| **Ollama + Llama 3.2 (3B)** | Inferencia de IA local (costo CERO en API) |
+| **DeepSeek API** | Auditor cloud — verifica respuestas de la IA local |
+| **Streamlit** | Dashboard en tiempo real |
+| **SMTP (Gmail)** | Envío de alertas por correo |
+| **python-dotenv** | Gestión de variables de entorno |
+| **Git** | Control de versiones con flujo de ramas por funcionalidad |
 
 ## 💡 Key Insights & Data Optimization
 
@@ -132,8 +129,6 @@ graph TD
 | `alertas.py` | **Alertas por Correo** — Envía alertas SMTP vía Gmail cuando la analítica detecta anomalías o completa ciclos |
 | `dashboard.py` | **Dashboard Streamlit** — Visualiza top productos con gráficos de barras y permite preguntar a la IA local |
 | `instrucciones.md` | **Reglas de Codificación** — Define cómo el asistente IA enseña y colabora con el desarrollador |
-| `tareas.md` | **Lista de Tareas** — Funcionalidades actuales y próximas a construir |
-| `linkedin_post.md` | **Post para LinkedIn** — Borrador en inglés y español sobre el proyecto |
 
 ## 🛠️ Stack Tecnológico
 
